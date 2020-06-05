@@ -1,0 +1,261 @@
+,
+"/home/v1/": {
+    "get": {
+        "operationId": "get_home_page_details",
+        "summary": "gives the complete details of the home page",
+        "description": "home page details",
+        "security": [{
+            "oauth": []
+        }],
+        "parameters": [{
+            "$ref": "#/parameters/GetHomePageDetailsParameters"
+        }],
+        "responses": {
+            "200": {
+                "$ref": "#/responses/GetHomePageDetailsResponse"
+            }
+        }
+    }
+},
+"/set-meal-preferences/v1/": {
+    "get": {
+        "operationId": "set_meal_preferences",
+        "description": "selects required meal",
+        "security": [{
+            "oauth": []
+        }],
+        "parameters": [{
+                "$ref": "#/parameters/SetMealPreferencesParameters"
+            },
+            {
+                "$ref": "#/parameters/GetHomePageDetailsParameters"
+            }
+        ],
+        "responses": {
+            "200": {
+                "$ref": "#/responses/SetMealPreferencesResponses"
+            }
+        }
+    }
+},
+"/set-meal-preferences/custom/v1/": {
+    "get": {
+        "operationId": "get_user_custom_meal_details",
+        "description": "selects the quantity",
+        "security": [{
+            "oauth": []
+        }],
+        "parameters": [{
+            "$ref": "#/parameters/CustomMealParameters"
+        }],
+        "responses": {
+            "200": {
+                "description": "Success Response"
+            }
+        }
+    }
+},
+"/feedback/v1/": {
+    "get": {
+        "operationId": "feedback_for_meal_type",
+        "description": "feedback for meal type",
+        "security": [{
+            "oauth": []
+        }],
+        "parameters": [{
+            "$ref": "#/parameters/FeedbackParameters"
+        }],
+        "responses": {
+            "200": {
+                "description": "success response"
+            }
+        }
+    }
+}
+
+
+
+
+
+"responses":
+
+"GetHomePageDetailsResponse": {
+    "description": "Success Response",
+    "schema": {
+        "$ref": "#/definitions/MenuDetails"
+    }
+},
+"SetMealPreferencesResponses": {
+    "description": "Success Response",
+    "schema": {
+        "$ref": "#/definitions/SetMealPreferences"
+    }
+}
+
+
+
+"parameters": ,
+"GetHomePageDetailsParameters": {
+    "name": "date",
+    "in": "query",
+    "description": "menu on that date",
+    "type": "string",
+    "format": "date",
+    "required": true
+},
+"SetMealPreferencesParameters": {
+    "name": "meal_type",
+    "in": "query",
+    "description": "it sends the data regarding the meal_type",
+    "required": true,
+    "type": "string",
+    "enum": ["Breakfast", "Lunch", "Dinner"]
+},
+"FeedbackParameters": {
+    "name": "feedback details",
+    "in": "body",
+    "description": "it sends the feedback for meal_type",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "meal_type": {
+                "type": "string",
+                "enum": ["Breakfast", "Lunch", "Dinner"]
+            },
+            "feedback": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/FeedbackDetails"
+                }
+            }
+        },
+        "required": [
+            "meal_type", "feedback"
+        ]
+    }
+},
+"CustomMealParameters": {
+    "name": "custom meal preferences",
+    "in": "body",
+    "description": "gets the user and his preference quantity",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "user": {
+                "type": "string"
+            },
+            "preference": {
+                "allOf": [{
+                    "$ref": "#/definitions/CustomMealPreference"
+                }]
+            }
+        }
+    }
+}
+
+
+"definitions":
+"MenuDetails": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "menu_type": {
+                    "type": "string",
+                    "enum": ["Breakfast", "Lunch", "Dinner"]
+                },
+                "menu_items": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "menu_type",
+                "date", "menu_items"
+            ]
+        },
+        "SetMealType": {
+            "type": "object",
+            "properties": {
+                "menu_item": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "units": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "menu_item", "quantity"
+            ]
+        },
+        "SetMealPreferences": {
+            "type": "object",
+            "properties": {
+                "meal_type": {
+                    "type": "string",
+                    "enum": ["Breakfast", "Lunch", "Dinner"]
+                },
+                "meal_course": {
+                    "type": "string",
+                    "enum": ["Half-Meal", "Full-Meal"]
+                },
+                "menu_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SetMealType"
+                    }
+                }
+            },
+            "required": [
+                "meal_type", "meal_course",
+                "menu_items", "units"
+            ]
+        },
+        "CustomMealPreference": {
+            "type": "object",
+            "properties": {
+                "meal_type": {
+                    "type": "string",
+                    "enum": ["Breakfast", "Lunch", "Dinner"]
+                },
+                "menu_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SetMealType"
+                    }
+                }
+            },
+            "required": [
+                "meal_type", "menu_items"
+            ]
+        },
+        "FeedbackDetails": {
+            "type": "object",
+            "properties": {
+                "menu_item": {
+                    "type": "string"
+                },
+                "quality": {
+                    "type": "integer",
+                    "format": "int32",
+                    "enum": [1, 2, 3, 4, 5]
+                },
+                "taste": {
+                    "type": "integer",
+                    "format": "int32",
+                    "enum": [1, 2, 3, 4, 5]
+                }
+            },
+            "required": [
+                "menu_item", "quality",
+                "taste"
+            ]
+        }

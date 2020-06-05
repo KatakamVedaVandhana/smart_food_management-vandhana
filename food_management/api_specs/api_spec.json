@@ -1,0 +1,969 @@
+{
+  "swagger": "2.0",
+  "host": "127.0.0.1:8080",
+  "basePath": "/food_management/",
+  "info": {
+    "version": "1.0.0",
+    "title": "API",
+    "description": "An OpenAPI Specification"
+  },
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "oauth": {
+      "tokenUrl": "http://auth.ibtspl.com/oauth2/",
+      "flow": "password",
+      "scopes": {
+        "read": "read users",
+        "write": "create users",
+        "update": "update users",
+        "delete": "delete users",
+        "superuser": "super user permission"
+      },
+      "type": "oauth2"
+    }
+  },
+  "definitions": {
+    "ItemsAndWastage": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "item": {
+          "type": "string"
+        },
+        "food_wasted": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "food_prepared": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "base_units": {
+          "type": "string",
+          "enum": ["pieces", "kg"]
+        }
+      }
+    },
+    "Announcements": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string",
+          "format": "image"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title", "description", "image", "subtitle"
+      ]
+    },
+    "MealDetails": {
+      "type": "object",
+      "properties": {
+        "meal_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "meal_type": {
+          "type": "string",
+          "enum": ["Breakfast", "Lunch", "Dinner"]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ItemDetails"
+          }
+        },
+        "from_time_string": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "to_time_string": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "meal_course": {
+          "type": "string",
+          "enum": ["Half-meal", "Full-meal",
+            "Custom-meal", "Skip-meal"
+          ]
+        }
+      },
+      "required": [
+        "meal_id",
+        "meal_type",
+        "items",
+        "meal_course",
+        "from_time_string",
+        "to_time_string"
+      ]
+    },
+    "MealInfo": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "item": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Indian-Bread", "Rice", "Curry"]
+        },
+        "units": {
+          "type": "string",
+          "enum": ["pieces", "laddles", "cups"]
+        },
+        "meal_courses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MealCourse"
+          }
+        }
+      },
+      "required": [
+        "item_id", "item", "category", "units", "meal_courses"
+      ]
+    },
+    "MealCourse": {
+      "type": "object",
+      "properties": {
+        "meal_course_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "meal_course": {
+          "type": "string",
+          "enum": ["Half-meal", "Full-meal",
+            "Custom-meal", "Skip-meal"
+          ]
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": [
+        "meal_course", "quantity", "meal_course_id"
+      ]
+    },
+    "CustomMeal": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "quantity": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        }
+      },
+      "required": [
+        "item_id", "quantity"
+      ]
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "quality": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        },
+        "taste": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5]
+        }
+      },
+      "required": [
+        "item_id", "quality", "taste"
+      ]
+    },
+    "GetMealSchedule": {
+      "type": "object",
+      "properties": {
+        "meal_type": {
+          "type": "string",
+          "enum": ["Breakfast", "Lunch", "Dinner"]
+        },
+        "meal_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "items_list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ItemDetails"
+          }
+        }
+      },
+      "required": [
+        "meal_type", "meal_id", "date", "items_list"
+      ]
+    },
+    "ItemDetails": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "item": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Indian-Bread", "Curry", "Rice"]
+        },
+        "units": {
+          "type": "string",
+          "enum": ["pieces", "laddles", "cups"]
+        }
+      },
+      "required": ["item_id", "item", "category", "units"]
+    },
+    "ItemsAndMealCourseQuantites": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "meal_course": {
+          "type": "string",
+          "enum": ["Half-meal", "Full-meal"]
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": ["item_id", "meal_course", "quantity"]
+    },
+    "ItemsCount": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "item": {
+          "type": "string"
+
+        },
+        "item_count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "required": ["item_id", "item", "item_count"]
+    },
+    "MealCourseCount": {
+      "type": "object",
+      "properties": {
+        "meal_course": {
+          "type": "string",
+          "enum": ["Half-meal", "Full-meal", "Skip-meal", "Custom-meal"]
+        },
+        "meal_course_count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "GetUserDetailsParameters": {
+      "name": "userdetails",
+      "in": "body",
+      "description": "contains user details",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username", "password"
+        ]
+      }
+    },
+    "HomePageParameters": {
+      "name": "date",
+      "in": "body",
+      "description": "date",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      }
+    },
+    "UserIdParameter": {
+      "name": "user_id",
+      "in": "path",
+      "description": "user",
+      "type": "integer",
+      "format": "int32",
+      "required": true
+    },
+    "DateQueryParameter": {
+      "name": "date",
+      "in": "query",
+      "description": "meal data on that date",
+      "type": "string",
+      "format": "datetime",
+      "required": true
+    },
+    "SetMealStatusParameters": {
+      "name": "status_update",
+      "in": "body",
+      "description": "meal status",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Lunch", "Dinner"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "meal_course": {
+            "type": "string",
+            "enum": ["Half-meal", "Full-meal", "Skip-meal"]
+          }
+        },
+        "required": [
+          "meal_type", "meal_course", "date"
+        ]
+      }
+    },
+    "CustomMealParameters": {
+      "name": "custom_meal",
+      "in": "body",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meal_course": {
+            "type": "string",
+            "enum": ["Custom-meal"]
+          },
+          "items_and_quantities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/CustomMeal"
+            }
+          }
+        },
+        "required": [
+          "meal_id", "items_and_quantities",
+          "meal_course"
+        ]
+      }
+    },
+    "MealParameters": {
+      "name": "mealpreference",
+      "in": "body",
+      "description": "meal info",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Lunch", "Dinner"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          }
+        },
+        "required": ["meal_type", "date"]
+      }
+    },
+    "RatingParameters": {
+      "name": "review",
+      "in": "body",
+      "description": "review info",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items_and_ratings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Review"
+            }
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "meal_id", "items_and_ratings"
+        ]
+      }
+    },
+    "GetMealPreferenceParameters": {
+      "name": "getmealpreference",
+      "in": "body",
+      "description": "getmealpreference",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Lunch", "Dinner"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          }
+        },
+        "required": ["meal_type", "date"]
+      }
+    },
+    "UpdateMealPreferences": {
+      "name": "updatemealpreference",
+      "in": "body",
+      "description": "updatemealpreference",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Lunch", "Dinner"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "items_list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ItemsAndMealCourseQuantites"
+            }
+          }
+        },
+        "required": [
+          "meal_type", "date", "items_list"
+        ]
+      }
+    },
+    "GetHeadCountParamters": {
+      "name": "gethedcount",
+      "in": "body",
+      "description": "get head count",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Lunch", "Dinner"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
+          }
+        },
+        "required": ["meal_type", "date"]
+      }
+    },
+    "UserRatingParameters": {
+      "name": "rating",
+      "in": "body",
+      "description": "get the user rating",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "meal_id": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "meal_id"
+        ]
+      }
+    }
+  },
+  "responses": {
+    "GetUserDetailsResponses": {
+      "description": "Success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "boolean"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "string"
+          },
+          "is_admin": {
+            "type": "string",
+            "format": "boolean"
+          }
+        },
+        "required": [
+          "access_token", "user_id",
+          "refresh_token", "expires_in",
+          "is_admin"
+        ]
+      }
+    },
+    "GetHomePageResponse": {
+      "description": "Success Response",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/MealDetails"
+        }
+      }
+    },
+    "GetMealPreferencesResponse": {
+      "description": "Success Response",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/MealInfo"
+        }
+      }
+    },
+    "GetAnnouncements": {
+      "description": "success response",
+      "schema": {
+        "type": "array",
+        "items": {
+
+          "$ref": "#/definitions/Announcements"
+        }
+      }
+    },
+    "GetMealScheduleResponse": {
+      "description": "success response",
+      "schema": {
+        "$ref": "#/definitions/GetMealSchedule"
+      }
+    },
+    "ItemsListResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/ItemDetails"
+        }
+      }
+    },
+    "GetHeadCountResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "items_count": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ItemsCount"
+            }
+          },
+          "meal_course_counts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/MealCourseCount"
+            }
+          },
+          "total_meal_head_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completed_meal_head_count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "items_count", "meal_course_counts",
+          "total_meal_head_count", "completed_meal_head_count"
+        ]
+      }
+    },
+    "RatingResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "items_and_ratings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Review"
+            }
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "GetFoodWastageResonse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "food_wasted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "food_prepared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "base_unit": {
+            "type": "string",
+            "enum": ["kg"]
+          },
+          "items_and_wastage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ItemsAndWastage"
+            }
+          }
+        },
+        "required": [
+          "food_wasted", "food_prepared",
+          "base_unit", "items_and_wastage"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/signup/v1/": {
+      "post": {
+        "operationId": "create_user",
+        "summary": "creates new user if its not a member",
+        "description": "creates new user",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/GetUserDetailsParameters"
+        }],
+        "responses": {
+          "201": {
+            "description": "succesfully created"
+          },
+          "400": {
+            "description": "Already an User"
+          }
+        }
+      }
+    },
+    "/signin/v1/": {
+      "post": {
+        "operationId": "login",
+        "summary": "gives the details of the existing user",
+        "description": "gives user details",
+        "parameters": [{
+          "$ref": "#/parameters/GetUserDetailsParameters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetUserDetailsResponses"
+          },
+          "404": {
+            "description": "Invalid Username"
+          },
+          "400": {
+            "description": "Invalid Password"
+          }
+        }
+      }
+    },
+    "/home/v1/": {
+      "post": {
+        "operationId": "get_home_page",
+        "summary": "gives the details on the home page",
+        "description": "gives the details of the home page",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/HomePageParameters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetHomePageResponse"
+          },
+          "400": {
+            "description": "invalid date"
+          }
+        }
+
+      }
+    },
+    "/announcements/v1/": {
+      "get": {
+        "operationId": "get_announcements",
+        "summary": "send the announcements",
+        "description": "get the announcements of that date",
+        "parameters": [{
+          "$ref": "#/parameters/DateQueryParameter"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAnnouncements"
+          }
+        }
+
+      }
+    },
+    "/meal/preference/v1/": {
+      "post": {
+        "operationId": "get_meal_preference",
+        "summary": "can set their meal",
+        "description": "gives the details of the page",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/MealParameters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMealPreferencesResponse"
+          },
+          "404": {
+            "description": "invalid meal id"
+          }
+        }
+      }
+    },
+    "/meal/preference/update/v1/": {
+      "put": {
+        "operationId": "update_user_meal_preference",
+        "summary": "update the status of the meal",
+        "description": "update the status of the user",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/SetMealStatusParameters"
+        }],
+        "responses": {
+          "200": {
+            "description": "success response"
+          },
+          "404": {
+            "description": "invalid meal id"
+          }
+        }
+      }
+    },
+    "/meal/custom_meal/update/v1/": {
+      "put": {
+        "operationId": "update_custom_meal_preference",
+        "summary": "update the custom meal status",
+        "description": "update the status of the user meal",
+        "parameters": [{
+          "$ref": "#/parameters/CustomMealParameters"
+        }],
+        "responses": {
+          "200": {
+            "description": "success response"
+          },
+          "404": {
+            "description": "invalid meal id"
+          },
+          "400": {
+            "description": "invalid quantity, invalid item id"
+          }
+        }
+      }
+    },
+    "/rating/v1/update/": {
+      "post": {
+        "operationId": "update_user_rating",
+        "summary": "update the user review",
+        "description": "update user review",
+        "parameters": [{
+          "$ref": "#/parameters/RatingParameters"
+        }],
+        "responses": {
+          "200": {
+            "description": "success response"
+          },
+          "400": {
+            "description": "invalid meal_id"
+          },
+          "404": {
+            "description": "invalid item id"
+          }
+        }
+      }
+    },
+    "/rating/v1/": {
+      "post": {
+        "operationId": "get_user_rating",
+        "summary": "get user rating",
+        "description": "get user rating",
+        "parameters": [{
+          "$ref": "#/parameters/UserRatingParameters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RatingResponse"
+          }
+        }
+      }
+    },
+    "/admin/schedule_menu/v1/": {
+      "post": {
+        "operationId": "get_meal_schedule",
+        "summary": "get schedule for the menu",
+        "description": "schedule for the menu",
+        "security": [{
+          "oauth": ["read", "write", "superuser"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/GetMealPreferenceParameters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMealScheduleResponse"
+          },
+          "404": {
+            "description": "date has no meal"
+          }
+        }
+      }
+    },
+    "/admin/schedule_menu/items_list/v1/": {
+      "get": {
+        "operationId": "get_items_list",
+        "description": "get items list to schedule menu",
+        "summary": "get items list",
+        "security": [{
+          "oauth": ["read", "write", "superuser"]
+        }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ItemsListResponse"
+          }
+        }
+      }
+    },
+    "/admin/update_meal_schedule/v1/": {
+      "put": {
+        "operationId": "update_meal_schedule",
+        "description": "updates the existing meal",
+        "summary": "updates the meal",
+        "security": [{
+          "oauth": ["read", "write", "superuser"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/UpdateMealPreferences"
+        }],
+        "responses": {
+          "200": {
+            "description": "success response"
+          },
+          "400": {
+            "description": "invalid item id, invalid quantity"
+          }
+        }
+      }
+    },
+    "/admin/head_counts/v1/": {
+      "post": {
+        "operationId": "get_head_count_for_meal",
+        "description": "get head count for that meal",
+        "summary": "get total count detaila of the meal",
+        "security": [{
+          "oauth": ["read", "superuser"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/GetHeadCountParamters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetHeadCountResponse"
+          },
+          "404": {
+            "description": "invalid data"
+          }
+        }
+      }
+    },
+    "/admin/food_wastage/v1/": {
+      "get": {
+        "operationId": "get_food_wastage",
+        "description": "get food wastage for the meal",
+        "summary": "get the food wastage",
+        "security": [{
+          "oauth": ["superuser"]
+        }],
+        "parameters": [{
+          "$ref": "#/parameters/GetHeadCountParamters"
+        }],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetFoodWastageResonse"
+          }
+        }
+      }
+    }
+  }
+}
