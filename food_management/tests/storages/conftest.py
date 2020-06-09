@@ -6,7 +6,7 @@ from food_management.constants.constants import (
     DINNER_START_TIME, DINNER_END_TIME
 )
 from food_management.models.user import User
-from food_management.models.meal import Meal
+from food_management.models import Meal, FoodWastage
 from food_management.models.user_rating import UserRating
 from food_management.models.user_feedback import UserFeedback
 from food_management.models.announcements import Announcements
@@ -24,7 +24,8 @@ from datetime import time
 from food_management.interactors.storages.dtos import (
     HomePageDto, MealCourseDto, ItemDto, MealDto, AnnouncementDtos,
     MealCourseCompleteDetailsDto, SetMealPreferenceDto, MealScheduleDto,
-    UserRatingDto
+    UserRatingDto, FoodWastageDto, ItemAndWastageDto, HeadCountDto,
+    ItemsCountDto, MealCourseCountDto
 )
 from food_management.constants.enums import (
     TypeOfMeal, CategoryType, UnitType, CourseType
@@ -483,7 +484,8 @@ def item_and_quantity_dtos(item_objs):
 def custom_meal_upadte_dto(user_objs, item_and_quantity_dtos, custom_meal_objs):
     return CustomeMealUpdateDto(
         user_id=1,
-        meal_id = 1,
+        meal_type = 'Breakfast',
+        date=datetime.now(),
         meal_course = 'Custom-meal',
         items_and_quantities=item_and_quantity_dtos
     )
@@ -522,10 +524,12 @@ def items_and_rating_dtos(item_objs, meal_objs):
     return items_and_rating_dtos_list
 
 @pytest.fixture
+@freeze_time('2020-02-12')
 def rating_dtos(items_and_rating_dtos, user_objs, meal_objs):
     return RatingDto(
         user_id=1,
-        meal_id=1,
+        meal_type='Breakfast',
+        date=datetime.now(),
         description='',
         items_and_ratings=items_and_rating_dtos
     )
@@ -551,12 +555,14 @@ def user_rating_dto(items_and_rating_dtos, user_rating_objs, user_feedback):
     )
 
 @pytest.fixture
+@freeze_time('2020-02-12')
 def update_rating_dtos(
         update_items_and_rating_dtos, user_rating_objs,
         user_objs, meal_objs, user_feedback):
     return RatingDto(
         user_id=1,
-        meal_id=1,
+        meal_type='Breakfast',
+        date=datetime.now(),
         description='',
         items_and_ratings=update_items_and_rating_dtos
     )
@@ -637,4 +643,58 @@ def create_meal_schedule(items_and_their_meal_course):
         meal_type='Breakfast',
         date=date(2020,2,12),
         items=items_and_their_meal_course
+    )
+
+@pytest.fixture
+def items_and_wastage(item_objs):
+    item_and_wastage_list = [
+        ItemAndWastageDto(item_id=1, item='Idly', food_prepared=300, food_wasted=50, base_unit='pieces'),
+        ItemAndWastageDto(item_id=2, item='Poori', food_prepared=300, food_wasted=50, base_unit='pieces'),
+        ItemAndWastageDto(item_id=3, item='MasalaRice', food_prepared=105, food_wasted=10, base_unit='kg')
+    ]
+
+@pytest.fixture
+def food_and_wastage_obj(item_objs, meal_objs):
+    food_wastage_dict = [
+        {
+            'meal_id':1, 'item_id':1, 'food_wasted': 300, 'food_prepared': 50, 'base_unit': 'pieces'
+        },
+        {
+            'meal_id':1, 'item_id':2, 'food_wasted': 300, 'food_prepared': 50, 'base_unit': 'pieces'
+        },
+        {
+            'meal_id':1, 'item_id':3, 'food_wasted': 105, 'food_prepared': 10, 'base_unit': 'kg'
+        }
+    ]
+    FoodWastage.objects.bulk_create([
+        FoodWastage(
+            meal_id=obj['meal_id'], item_id=['item_id'],
+            food_wasted=obj['food_wasted'], food_prepared=obj['food_prepared'],
+            base_unit=obj['base_unit']
+        )
+    for obj in food_wastage_dict
+    ])
+
+@pytest.fixture
+def food_wastage_dto(items_and_wastage,food_and_wastage_obj):
+    return FoodWastageDto(
+        food_wasted= 110,
+        food_prepared= 705,
+        base_unit= 'kg',
+        items_and_wastage= items_and_wastage
+    )
+
+
+
+@pytest.fixture
+def head_count_dto(user_meal_course_objs):
+    return HeadCountDto(
+        meal_course_count=[MealCourseCountDto(meal_course='Half-meal', meal_course_count=1)],
+        items_count= [
+            ItemsCountDto(item='Idly', item_id=1, item_count=1), 
+            ItemsCountDto(item='Poori', item_id=2, item_count=1), 
+            ItemsCountDto(item='MasalaRice', item_id=3, item_count=1)
+        ],
+        total_meal_head_count=1,
+        completed_meal_head_count=1
     )

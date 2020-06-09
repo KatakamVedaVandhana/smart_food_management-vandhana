@@ -46,7 +46,7 @@ class PresenterImplementation(PresenterInterface):
         raise BadRequest(INVALID_MEAL_COURSE)
 
     def raise_exception_for_invalid_item_id(self):
-        raise BadRequest(INVALID_ITEM_ID)
+        raise NotFound(INVALID_ITEM_ID)
 
     def raise_exception_for_invalid_date_for_that_meal(self):
         raise NotFound(INVALID_DATA)

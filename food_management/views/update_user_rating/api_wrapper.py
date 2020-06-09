@@ -21,13 +21,14 @@ from food_management.interactors.update_user_rating_interactor import \
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
 
-    user = kwargs['user'].id
+    user_id = kwargs['user'].id
     presenter = PresenterImplementation()
     storage = StorageImplementation()
     meal_storage = MealStorageImplementation()
     request_data = kwargs['request_data']
-    user_id = request_data['user_id']
-    meal_id = request_data['meal_id']
+    #user_id = request_data['user_id']
+    meal_type = request_data['meal_type']
+    date = request_data['date']
     description = request_data['description']
     items_and_ratings = request_data['items_and_ratings']
     items_and_ratings_dtos = []
@@ -40,7 +41,8 @@ def api_wrapper(*args, **kwargs):
             )
         )
     rating_dto = RatingDto(
-        meal_id=meal_id,
+        meal_type=meal_type,
+        date=date,
         user_id=user_id,
         items_and_ratings=items_and_ratings_dtos,
         description=description
@@ -49,14 +51,5 @@ def api_wrapper(*args, **kwargs):
         storage=storage, presenter=presenter,
         meal_storage=meal_storage
     )
-    try:
-        interactor.update_user_rating(rating_dto=rating_dto)
-    except BadRequest:
-        response = INVALID_ITEM_ID
-        json_response = json.dumps(response)
-        return HttpResponse(json_response, status=400)
-    except NotFound:
-        response = INVALID_MEAL_ID
-        json_response = json.dumps(response)
-        return HttpResponse(json_response, status=404)
+    interactor.update_user_rating(rating_dto=rating_dto)
     return HttpResponse(status=200)

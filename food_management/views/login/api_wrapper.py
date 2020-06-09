@@ -27,15 +27,7 @@ def api_wrapper(*args, **kwargs):
     username = request_data['username']
     password = request_data['password']
 
-    try:
-        response_dict = interactor.login(username=username, password=password)
-    except NotFound:
-        response_dict = INVALID_USERNAME
-        response = json.dumps(response_dict)
-        return HttpResponse(response, status=404)
-    except BadRequest:
-        response_dict = INVALID_PASSWORD
-        response = json.dumps(response_dict)
-        return HttpResponse(response, status=400)
+    response_dict = interactor.login(username=username, password=password)
+
     json_response = json.dumps(response_dict)
     return HttpResponse(json_response, status=201)

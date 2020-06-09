@@ -2,7 +2,7 @@ from typing import List
 from datetime import datetime
 from food_management.interactors.storages.storage_interface import \
     StorageInterface
-from food_management.models import User
+from food_management.models import User, Meal
 from food_management.models import Announcements
 from food_management.models.user_rating import UserRating
 from food_management.models.user_feedback import UserFeedback
@@ -83,8 +83,11 @@ class StorageImplementation(StorageInterface):
 
 
     def update_user_rating(self, rating_dto: RatingDto):
+        meal_type = rating_dto.meal_type
+        date_obj = rating_dto.date
+        meal_obj = Meal.objects.get(meal_type=meal_type, date=date_obj)
         user_id = rating_dto.user_id
-        meal_id = rating_dto.meal_id
+        meal_id = meal_obj.id
         description = rating_dto.description
         items_and_ratings_dtos_list = rating_dto.items_and_ratings
         userrating_objs = UserRating.objects.filter(user_id=user_id, meal_id=meal_id)
@@ -102,8 +105,11 @@ class StorageImplementation(StorageInterface):
 
 
     def create_user_rating(self, rating_dto: RatingDto):
+        meal_type = rating_dto.meal_type
+        date_obj = rating_dto.date
+        meal_obj = Meal.objects.get(meal_type=meal_type, date=date_obj)
         user_id = rating_dto.user_id
-        meal_id = rating_dto.meal_id
+        meal_id = meal_obj.id
         description = rating_dto.description
         items_and_ratings = rating_dto.items_and_ratings
         UserRating.objects.bulk_create([

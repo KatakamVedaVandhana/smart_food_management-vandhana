@@ -21,8 +21,10 @@ from food_management.interactors.get_user_rating_interactor import \
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
     request_data = kwargs['request_data']
-    user_id = request_data['user_id']
-    meal_id = request_data['meal_id']
+    user_id = kwargs['user'].id
+    print(user_id)
+    meal_type = request_data['meal_type']
+    date = request_data['date']
     presenter = PresenterImplementation()
     storage = StorageImplementation()
     meal_storage = MealStorageImplementation()
@@ -31,17 +33,8 @@ def api_wrapper(*args, **kwargs):
         storage=storage,
         meal_storage=meal_storage
     )
-    try:
-        response = interactor.get_user_rating(
-                meal_id=meal_id, user_id=user_id
-            )
-    except NotFound:
-        response = INVALID_MEAL_ID
-        json_response = json.dumps(response)
-        return HttpResponse(json_response, status=404)
-    except BadRequest:
-        response = INVALID_DATA
-        json_response = json.dumps(response)
-        return HttpResponse(json_response, status=400)
+    response = interactor.get_user_rating(
+            meal_type=meal_type, date_obj=date, user_id=user_id
+        )
     json_response = json.dumps(response)
     return HttpResponse(json_response, status=200)

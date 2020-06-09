@@ -16,6 +16,7 @@ from food_management.presenters.presenter_implementation import \
 def api_wrapper(*args, **kwargs):
 
     request_data = kwargs['request_data']
+    user_id = kwargs['user'].id
     meal_type = request_data['meal_type']
     date = request_data['date']
     meal_storage = MealStorageImplementation()
@@ -23,13 +24,8 @@ def api_wrapper(*args, **kwargs):
     interactor = MealInteractor(
         presenter=presenter, meal_storage=meal_storage
     )
-    try:
-        response_data = interactor.get_meal_preference(
-            meal_type=meal_type, date_obj=date
-        )
-    except NotFound:
-        response_data = INVALID_MEAL_ID
-        response =json.dumps(response_data)
-        return HttpResponse(response, status=404)
+    response_data = interactor.get_meal_preference(
+        meal_type=meal_type, date_obj=date, user_id=user_id
+    )
     response = json.dumps(response_data, indent=4)
     return HttpResponse(response, status=200)

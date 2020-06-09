@@ -17,7 +17,7 @@ def test_check_if_it_has_valid_item_ids_for_that_meal_return_true_for_valid_item
     )
 
     #Assert
-    assert bool_value == True
+    assert bool_value is True
 
 @pytest.mark.django_db
 def test_check_if_it_has_valid_item_ids_for_that_meal_returns_false_for_valid_item_ids(
@@ -34,4 +34,4 @@ def test_check_if_it_has_valid_item_ids_for_that_meal_returns_false_for_valid_it
     )
 
     #Assert
-    assert bool_value == False
+    assert bool_value is False

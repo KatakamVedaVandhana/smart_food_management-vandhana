@@ -27,13 +27,8 @@ def api_wrapper(*args, **kwargs):
     interactor = UpdateUserMealPreferenceInteractor(
         presenter=presenter, meal_storage=meal_storage
     )
-    try:
-        interactor.update_user_meal_preference(
-            meal_type=meal_type, user_id=user_id, meal_course=meal_course,
-            date_obj=date
-        )
-    except BadRequest:
-        response = INVALID_MEAL_ID
-        json_response = json.dumps(response)
-        return HttpResponse(json_response, status=404)
+    interactor.update_user_meal_preference(
+        meal_type=meal_type, user_id=user_id, meal_course=meal_course,
+        date_obj=date
+    )
     return HttpResponse(status=200)

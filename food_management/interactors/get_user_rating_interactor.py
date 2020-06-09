@@ -1,3 +1,5 @@
+from datetime import datetime
+from food_management.constants.enums import TypeOfMeal
 from food_management.interactors.presenters.presenter_interface import \
     PresenterInterface
 from food_management.interactors.storages.meal_storage_interface import \
@@ -16,9 +18,12 @@ class GetUserRatingInteractor:
         self.meal_storage = meal_storage
         self.storage = storage
 
-    def get_user_rating(self, meal_id: int, user_id: int):
+    def get_user_rating(self, meal_type: TypeOfMeal, user_id: int, date_obj:datetime):
 
-        self._check_if_its_valid_meal_id(meal_id=meal_id)
+        self._check_if_date_has_a_meal(meal_type=meal_type, date_obj=date_obj)
+
+        meal_id = self.meal_storage.get_meal_id(meal_type=meal_type, date_obj=date_obj)
+
         is_user_has_a_rating = \
             self._check_if_user_has_a_rating(meal_id=meal_id, user_id=user_id)
         if is_user_has_a_rating:
@@ -28,11 +33,13 @@ class GetUserRatingInteractor:
             )
             return user_rating_dict
 
-    def _check_if_its_valid_meal_id(self, meal_id):
-        is_valid_meal_id = self.meal_storage.check_if_its_valid_meal_id(meal_id)
-        not_a_valid_meal_id = not is_valid_meal_id
-        if not_a_valid_meal_id:
-            self.presenter.raise_exception_for_invalid_meal_id()
+    def _check_if_date_has_a_meal(self, meal_type, date_obj):
+        is_having_a_meal = self.meal_storage.check_if_date_has_a_meal(
+            meal_type=meal_type, date_obj=date_obj
+        )
+        not_having_a_meal = not is_having_a_meal
+        if not_having_a_meal:
+            self.presenter.raise_exception_for_invalid_date_for_that_meal()
 
     def _check_if_user_has_a_rating(self, meal_id, user_id):
         is_user_has_a_rating = self.storage.check_if_user_has_a_rating(

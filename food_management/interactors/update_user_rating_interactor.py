@@ -17,8 +17,13 @@ class UpdateUserRatingInteractor:
 
     def update_user_rating(self, rating_dto: RatingDto):
 
-        meal_id = rating_dto.meal_id
-        self._check_if_its_valid_meal_id(meal_id=meal_id)
+        meal_type = rating_dto.meal_type
+        date_obj = rating_dto.date
+
+        self._check_if_date_has_a_meal(meal_type=meal_type, date_obj=date_obj)
+
+        meal_id = self.meal_storage.get_meal_id(meal_type=meal_type, date_obj=date_obj)
+
 
         user_id = rating_dto.user_id
 
@@ -35,13 +40,14 @@ class UpdateUserRatingInteractor:
         else:
             self.storage.create_user_rating(rating_dto=rating_dto)
 
-    def _check_if_its_valid_meal_id(self, meal_id):
-        is_valid_meal_id = self.meal_storage.check_if_its_valid_meal_id(
-            meal_id
+    def _check_if_date_has_a_meal(self, meal_type, date_obj):
+        is_having_a_meal = self.meal_storage.check_if_date_has_a_meal(
+            meal_type=meal_type, date_obj=date_obj
         )
-        not_a_valid_meal_id = not is_valid_meal_id
-        if not_a_valid_meal_id:
-            self.presenter.raise_exception_for_invalid_meal_id()
+        not_having_a_meal = not is_having_a_meal
+        if not_having_a_meal:
+            self.presenter.raise_exception_for_invalid_date_for_that_meal()
+        return is_having_a_meal
 
     def _check_if_it_has_valid_item_ids_for_that_meal(
             self, items_and_ratings, meal_id):

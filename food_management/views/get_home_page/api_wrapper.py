@@ -15,21 +15,15 @@ from food_management.interactors.get_home_page_interactor import \
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
 
-    print(kwargs['user'])
+    # print(kwargs['user'].id)
     user_id = kwargs['user'].id
     request_data = kwargs['request_data']
     meal_storage = MealStorageImplementation()
     presenter = PresenterImplementation()
     interactor = HomePageInteractor(meal_storage=meal_storage, presenter=presenter)
-    try:
-        response_dict = \
+    response_dict = \
         interactor.get_home_page(
             date_obj=request_data['date'], user_id=user_id
         )
-    except BadRequest:
-        response_dict = INVALID_DATA
-        response = json.dumps(response_dict, indent=4)
-        return HttpResponse(response, status=400)
-
     response = json.dumps(response_dict, indent=4)
     return HttpResponse(response, status=200)

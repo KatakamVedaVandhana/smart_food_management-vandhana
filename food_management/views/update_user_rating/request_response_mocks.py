@@ -2,7 +2,8 @@
 
 REQUEST_BODY_JSON = """
 {
-    "meal_id": 1,
+    "meal_type": "Breakfast",
+    "date": "string",
     "items_and_ratings": [
         {
             "item_id": 1,

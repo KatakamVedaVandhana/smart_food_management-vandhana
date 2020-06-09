@@ -22,7 +22,7 @@ class MealStorageInterface(ABC):
 
     @abstractmethod
     def get_meal_preference(
-            self, meal_id: int) -> SetMealPreferenceDto:
+            self, meal_id: int, user_id: int) -> SetMealPreferenceDto:
         pass
 
     @abstractmethod

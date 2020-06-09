@@ -94,13 +94,13 @@ def test_update_meal_schedule_with_invalid_item_ids(update_meal_schedule_dtos):
         presenter=presenter, meal_storage=meal_storage
     )
     meal_storage.check_if_item_exits.return_value = False
-    presenter.raise_exception_for_invalid_item_id.side_effect = BadRequest
+    presenter.raise_exception_for_invalid_item_id.side_effect = NotFound
     item_ids = update_meal_schedule_dtos.items
     meal_type = update_meal_schedule_dtos.meal_type
     invalid_item_ids = {1,2,3}
 
     #Assert
-    with pytest.raises(BadRequest):
+    with pytest.raises(NotFound):
         interactor.update_meal_schedule(
             update_meal_schedule_dto=update_meal_schedule_dtos
         )

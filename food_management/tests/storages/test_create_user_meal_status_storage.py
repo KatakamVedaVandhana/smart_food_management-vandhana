@@ -20,4 +20,4 @@ def test_create_user_meal_status(user_meal_course_objs):
     #Act
     meal_course_obj = MealCourse.objects.filter(meal_id=meal_id, meal_course=meal_course)[0]
     usermealcourse_obj = UserMealStatus.objects.filter(meal_id=meal_id, user_id=user_id)[0]
-    assert usermealcourse_obj.meal_course_id == meal_course_obj
+    assert usermealcourse_obj.meal_course == meal_course_obj

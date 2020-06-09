@@ -13,6 +13,7 @@ class UserRatingDto:
     items_and_ratings: List[ItemAndRatingDto]
     description: str
 
+
 @dataclass
 class UserDto:
     user_id: int
@@ -25,6 +26,7 @@ class MealCourseDto:
     meal_course: CourseType
     meal_id: int
     meal_type: TypeOfMeal
+
 
 @dataclass
 class ItemDto:
@@ -42,6 +44,7 @@ class MealDto:
     date: date
     from_time_string: time
     to_time_string: time
+
 
 @dataclass
 class HomePageDto:

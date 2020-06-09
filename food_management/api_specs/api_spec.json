@@ -386,9 +386,13 @@
       "schema": {
         "type": "object",
         "properties": {
-          "meal_id": {
-            "type": "integer",
-            "format": "int32"
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Dinner", "Lunch"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
           },
           "meal_course": {
             "type": "string",
@@ -402,7 +406,7 @@
           }
         },
         "required": [
-          "meal_id", "items_and_quantities",
+          "meal_type", "date", "items_and_quantities",
           "meal_course"
         ]
       }
@@ -433,9 +437,13 @@
       "schema": {
         "type": "object",
         "properties": {
-          "meal_id": {
-            "type": "integer",
-            "format": "int32"
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Dinner", "Lunch"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
           },
           "items_and_ratings": {
             "type": "array",
@@ -448,7 +456,7 @@
           }
         },
         "required": [
-          "meal_id", "items_and_ratings"
+          "meal_type", "date", "items_and_ratings"
         ]
       }
     },
@@ -524,13 +532,17 @@
       "schema": {
         "type": "object",
         "properties": {
-          "meal_id": {
-            "type": "integer",
-            "format": "int32"
+          "meal_type": {
+            "type": "string",
+            "enum": ["Breakfast", "Dinner", "Lunch"]
+          },
+          "date": {
+            "type": "string",
+            "format": "datetime"
           }
         },
         "required": [
-          "meal_id"
+          "meal_type", "date"
         ]
       }
     }
@@ -701,7 +713,7 @@
           "$ref": "#/parameters/GetUserDetailsParameters"
         }],
         "responses": {
-          "201": {
+          "200": {
             "description": "succesfully created"
           },
           "400": {
@@ -816,6 +828,9 @@
         "operationId": "update_custom_meal_preference",
         "summary": "update the custom meal status",
         "description": "update the status of the user meal",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
         "parameters": [{
           "$ref": "#/parameters/CustomMealParameters"
         }],
@@ -832,11 +847,14 @@
         }
       }
     },
-    "/rating/v1/update/": {
+    "/rating/update/v1/": {
       "post": {
         "operationId": "update_user_rating",
         "summary": "update the user review",
         "description": "update user review",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
         "parameters": [{
           "$ref": "#/parameters/RatingParameters"
         }],
@@ -858,6 +876,9 @@
         "operationId": "get_user_rating",
         "summary": "get user rating",
         "description": "get user rating",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
         "parameters": [{
           "$ref": "#/parameters/UserRatingParameters"
         }],

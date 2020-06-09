@@ -2,12 +2,14 @@ from collections import defaultdict
 from datetime import datetime
 from datetime import time
 from typing import List, Set
-from django.db.models import Prefetch, Count
+from django.db.models import Prefetch, Count, Sum
+
 from food_management.models.meal import Meal
 from food_management.models.items import Items
 from food_management.models.meal_course import MealCourse
 from food_management.models.food_wastage import FoodWastage
 from food_management.models.user_meal_status import UserMealStatus
+
 from food_management.exceptions.exceptions import UserHasNoMealCourse
 from food_management.constants.constants import \
     DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT
@@ -84,16 +86,24 @@ class MealStorageImplementation(MealStorageInterface):
 
 
     def get_meal_preference(
-            self, meal_id: int) -> SetMealPreferenceDto:
-
-        meal_obj = Meal.objects.filter(id=meal_id).\
-                                prefetch_related('mealcourse_set')[0]
+            self, meal_id: int, user_id: int) -> SetMealPreferenceDto:
+        meal_course_objects = MealCourse.objects.filter(meal_id=meal_id).\
+                                                 prefetch_related(
+                                                     'usermealstatus_set',
+                                                     Prefetch(
+                                                         'meal',
+                                                         queryset=Meal.objects.prefetch_related('item')
+                                                     )
+                                                 )
+        # meal_obj = Meal.objects.filter(id=meal_id).\
+        #                         prefetch_related('mealcourse_set', 'usermealstatus_set')[0]
         meal_course_complete_details_dto = []
-        mealcourse_objs = meal_obj.mealcourse_set.all()
-        for mealcourse_obj in mealcourse_objs:
+        meal_obj = meal_course_objects[0].meal
+        # mealcourse_objs = meal_obj.mealcourse_set.all()
+        for mealcourse_obj in meal_course_objects:
             meal_course_complete_details_dto.append(self.\
                 _convert_meal_course_obj_into_meal_course_complete_details_dto(
-                    mealcourse_obj)
+                    mealcourse_obj, user_id)
                 )
         item_dtos = self._convert_item_obj_as_dto(meal_obj)
         return SetMealPreferenceDto(
@@ -111,11 +121,17 @@ class MealStorageImplementation(MealStorageInterface):
 
 
     def _convert_meal_course_obj_into_meal_course_complete_details_dto(
-            self, mealcourse_obj):
+            self, mealcourse_obj, user_id):
+        custom_meal_quantity = mealcourse_obj.usermealstatus_set.filter(user_id=user_id)
+        if custom_meal_quantity:
+            quantity = custom_meal_quantity[0].custom_meal_quantity
+        else:
+            quantity = mealcourse_obj.quantity
+
         return MealCourseCompleteDetailsDto(
             item_id=mealcourse_obj.item_id,
             meal_course=mealcourse_obj.meal_course,
-            quantity=mealcourse_obj.quantity
+            quantity=quantity
         )
 
     def get_user_meal_course_if_user_has_a_meal(
@@ -143,7 +159,7 @@ class MealStorageImplementation(MealStorageInterface):
         )
         for mealcourse_obj in mealcourse_objs]
         )
-        print(UserMealStatus.objects.all())
+        
 
     def update_user_meal_status(
             self, meal_id: int, meal_course: CourseType,
@@ -178,6 +194,7 @@ class MealStorageImplementation(MealStorageInterface):
             usermealstatus_obj.item_id = meal_course_objs[index].item_id
             usermealstatus_obj.save()
 
+
     def create_custom_meal_status(
             self, meal_id: int, meal_course: CourseType, user_id: int,
             items_and_quantities: List[ItemAndQuantityDto]):
@@ -208,6 +225,7 @@ class MealStorageImplementation(MealStorageInterface):
             self, items_ids: List[int], meal_id: int):
         meal_obj = Meal.objects.get(id=meal_id)
         item_ids_list = list(meal_obj.item.all().values_list('id', flat=True).distinct())
+
         valid_item_ids = sorted(item_ids_list) == sorted(items_ids)
         return valid_item_ids
 
@@ -323,62 +341,60 @@ class MealStorageImplementation(MealStorageInterface):
 
     def get_meal_head_count(self, meal_type: TypeOfMeal, date_obj: datetime) -> HeadCountDto:
         meal_obj = Meal.objects.get(meal_type=meal_type, date=date_obj)
-        items_count = {}
-        user_meal_course_objs = UserMealStatus.objects.filter(
-            meal=meal_obj).prefetch_related('item','meal_course')
+        item_count_dto, meal_course_count_dto = [], []
+        meal_course_counts = UserMealStatus.objects.filter(meal=meal_obj).\
+                               values_list('meal_course__meal_course').\
+                               annotate(
+                                   count=Count('meal_course'),
+                                   total_count=Count('user_id')
+                               )
 
-        meal_course_count_dto = self._get_meal_course_count(user_meal_course_objs)
-        item_count_dto = self._get_items_count(user_meal_course_objs)
-        head_count_dto = HeadCountDto(
-            items_count=item_count_dto,
-            meal_course_count=meal_course_count_dto,
-            total_meal_head_count=10,
-            completed_meal_head_count=10
-        )
+        items_count = UserMealStatus.objects.filter(meal=meal_obj).\
+                                             values('item__item','item').\
+                                             annotate(count = Sum('custom_meal_quantity')) 
 
-    def _get_meal_course_count(self, user_meal_course_objs):
-
-        meal_course_count_list = list(
-            user_meal_course_objs.values(
-                'meal_course__meal_course'
-            ).annotate('meal_course')
-        )
-        meal_course_count_dto = [
-            MealCourseCountDto(
-                meal_course=meal_course, meal_course_count=count//3) 
-                for meal_course, count in meal_course_count_list
-            ]
-        return meal_course_count_dto
-
-    def _get_items_count(self, user_meal_course_objs):
-        items_count={}
-        user_meal_course_objs= user_meal_course_objs.exclude(
-            meal_course__meal_course='Skip-meal'
-        )
-        for user_meal_course_obj in user_meal_course_objs:
-            items_count[user_meal_course_obj.item] *= \
-                user_meal_course_obj.custom_meal_quantity
-        item_count_dto = [
-            ItemsCountDto(
-                item_id=key.id,
-                item=key.item,
-                items_count=value
+        for item_count in items_count:
+            item_count_dto.append(
+                ItemsCountDto(
+                    item_id=item_count['item'],
+                    item=item_count['item__item'],
+                    item_count=item_count['count']
+                )
             )
-            for key,value in items_count.items()
-        ]
+
+        for meal_course_count in meal_course_counts:
+            meal_course_count_dto.append(
+                MealCourseCountDto(
+                    meal_course=meal_course_count['meal_course__meal_course'],
+                    meal_course_count=meal_course_count['count'])
+                )
+
+        # return HeadCountDto(
+        #     meal_course_count=meal_course_count_dto,
+        #     items_count=item_count_dto,
+        #     total_meal_head_count=)
+
 
     def get_food_wastage(self, meal_type: TypeOfMeal, date_obj: datetime) -> FoodWastageDto:
         meal_obj = Meal.objects.get(meal_type=meal_type, date=date_obj)
+        food_wasted, food_prepared = 0, 0
         food_wastage_objs = FoodWastage.objects.filter(meal=meal_obj).select_related('item')
-        print(food_wastage_objs)
+
         items_and_wastage_dtos = []
         for food_wastage_obj in food_wastage_objs:
             items_and_wastage_dtos.append(
                 self._convert_food_wastage_obj_as_dto(food_wastage_obj)
             )
+            food_wasted += food_wastage_obj.food_wasted
+            food_prepared += food_wastage_obj.food_prepared
+        return FoodWastageDto(
+            food_wasted=food_wasted,
+            food_prepared=food_prepared,
+            items_and_wastage=items_and_wastage_dtos
+        )
 
     def _convert_food_wastage_obj_as_dto(self, food_wastage_obj):
-        print(food_wastage_obj)
+        
         return ItemAndWastageDto(
             item_id=food_wastage_obj.item_id,
             item=food_wastage_obj.item.item,

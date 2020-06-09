@@ -2,6 +2,7 @@ from django.db import models
 from food_management.models import Items
 from food_management.constants.enums import TypeOfMeal
 
+
 class Meal(models.Model):
     item = models.ManyToManyField('Items', through='MealCourse')
     meal_type = models.CharField(

@@ -12,9 +12,9 @@ class ItemAndQuantityDto:
 @dataclass
 class CustomeMealUpdateDto:
     user_id: int
-    #date: datetime
-    #meal_type : TypeOfMeal
-    meal_id: int
+    date: datetime
+    meal_type : TypeOfMeal
+    #meal_id: int
     meal_course: CourseType
     items_and_quantities: List[ItemAndQuantityDto]
 
@@ -29,7 +29,8 @@ class ItemAndRatingDto:
 @dataclass
 class RatingDto:
     user_id: int
-    meal_id: int
+    meal_type: TypeOfMeal
+    date: datetime
     description: str
     items_and_ratings: List[ItemAndRatingDto]
 

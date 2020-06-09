@@ -409,15 +409,19 @@ def item_and_quantity_dtos():
     return list_of_items
 
 @pytest.fixture
+@freeze_time('2020-02-12')
 def custom_meal_upadte_dto(item_and_quantity_dtos):
     return CustomeMealUpdateDto(
         user_id=1,
-        meal_id=1,
+        meal_type="Breakfast",
+        date=datetime.now(),
         meal_course='Custom-meal',
         items_and_quantities=item_and_quantity_dtos
     )
 
+
 @pytest.fixture
+@freeze_time('2020-02-12')
 def custom_meal_dto_with_invalid_quantity():
     item_and_quantity = [
         ItemAndQuantityDto(
@@ -426,7 +430,8 @@ def custom_meal_dto_with_invalid_quantity():
     ]
     return CustomeMealUpdateDto(
         user_id=1,
-        meal_id=1,
+        meal_type="Breakfast",
+        date=datetime.now(),
         meal_course='Custom-meal',
         items_and_quantities=item_and_quantity
     )
@@ -473,10 +478,12 @@ def get_rating_dict():
     }
 
 @pytest.fixture
+@freeze_time('2020-02-12')
 def rating_dtos(items_and_rating_dtos):
     return RatingDto(
         user_id=1,
-        meal_id=1,
+        meal_type='Breakfast',
+        date=datetime.now(),
         description='',
         items_and_ratings=items_and_rating_dtos
     )
