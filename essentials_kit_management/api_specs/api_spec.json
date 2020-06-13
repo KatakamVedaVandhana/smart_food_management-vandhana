@@ -1,0 +1,426 @@
+{
+    "swagger": "2.0",
+    "host": "localhost:8000",
+    "basePath": "/api/",
+    "info": {
+        "version": "1.0.0",
+        "title": "Simple API",
+        "description": "A simple API to learn how to write OpenAPI Specification"
+    },
+    "schemes": [
+        "https",
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "oauth": {
+            "tokenUrl": "http://auth.ibtspl.com/oauth2/",
+            "flow": "password",
+            "scopes": {
+                "read": "read users",
+                "write": "create users",
+                "update": "update users",
+                "delete": "delete users",
+                "superuser": "super user permission"
+            },
+            "type": "oauth2"
+        }
+    },
+    "definitions": {
+        "ListOfForms": {
+            "type": "object",
+            "properties": {
+                "form_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "form_name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": ["LIVE", "DONE", "CLOSED"]
+                },
+                "closed_date": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "expected_date": {
+                    "type": "string",
+                    "format": "datetime"
+                },
+                "total_items": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "pending_items": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "estimated_cost": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "cost_incurred": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "required": [
+                "form_id",
+                "form_name",
+                "status",
+                "closed_date",
+                "expected_date",
+                "total_items",
+                "pending_items",
+                "estimated_cost",
+                "cost_incurred"
+            ]
+        },
+        "BrandDetails": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "brand_name": {
+                    "type": "string"
+                },
+                "min_quantity": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "max_quantity": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "price": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "required": [
+                "brand_id",
+                "brand_name",
+                "min_quantity",
+                "max_quantity",
+                "price",
+            ]
+        },
+        "ItemDetails": {
+            "type": "object",
+            "properties": {
+                "item_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "item_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "brands": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/BrandDetails"
+                    }
+                },
+                "user_quantity": {
+                    "type": "integer",
+                    "format": "int32",
+                },
+                "calculated_price": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "required": [
+                "item_id",
+                "item_name",
+                "description",
+                "brands",
+                "user_quatity",
+                "calculated_price"
+            ]
+        },
+        "FormDetails": {
+            "type": "object",
+            "properties": {
+                "section_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "section_name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string",
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ItemDetails"
+                    }
+                }
+            },
+            "required": [
+                "section_id",
+                "section_name",
+                "note",
+                "items"
+            ]
+        },
+        "ItemAndQualityDetails": {
+            "type": "object",
+            "properties": {
+                "item_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "brand_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "required": [
+                "item_id",
+                "brand_id",
+                "quantity"
+            ]
+        },
+        "SectionDetails": {
+            "type": "object",
+            "properties": {
+                "section_id": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ItemAndQualityDetails"
+                    }
+                }
+            },
+            "required": [
+                "section_id",
+                "items"
+            ]
+        }
+    },
+    "parameters": {
+        "OffsetParameter": {
+            "in": "query",
+            "name": "offset",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+        },
+        "LimitParameter": {
+            "in": "query",
+            "name": "limit",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+        },
+        "FormIdParameter": {
+            "in": "path",
+            "name": "form_id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+        },
+        "UpdateUserFormDetails": {
+            "in": "body",
+            "name": "update_user_form_details",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "form_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/SectionDetails"
+                        }
+                    }
+                },
+                "required": [
+                    "form_id",
+                    "sections"
+                ]
+            }
+        }
+    },
+    "responses": {
+        "ListOfFormDetailsResponse": {
+            "description": "success response",
+            "schema": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/ListOfForms"
+                }
+            }
+        },
+        "QueryParametersErrorMessages": {
+            "description": "error messages",
+            "schema": {
+                "type": "string",
+                "enum": [
+                    "INVALID_OFFSET_PARAMETER",
+                    "INVALID_LIMIT_PARAMETER"
+                ]
+            }
+        },
+        "FormDetailsResponse": {
+            "description": "success response",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "form_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "form_name": {
+                        "type": "string"
+                    },
+                    "closed_date": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "expected_date": {
+                        "type": "string",
+                        "format": "datetime"
+                    },
+                    "instructions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/FormDetails"
+                        }
+                    },
+                    "total_items_added": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total_cost": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "required": [
+                    "form_id",
+                    "form_name",
+                    "closed_date",
+                    "expected_date",
+                    "instructions",
+                    "sections",
+                    "total_items_added",
+                    "total_cost"
+                ]
+            }
+        },
+        "FormDetailsErrorMessages": {
+            "description": "error messages",
+            "schema": {
+                "type": "string",
+                "enum": [
+                    "INVALID_FORM_ID",
+                    "INVALID_SECTION_ID",
+                    "INVALID_ITEMS_FOR_SECTION",
+                    "INVALID_QUANTITY_FOR_BRAND",
+                    "INVALID_BRAND_ID_FOR_ITEM",
+                    "DUPLICATE_ITEMS_SEND"
+                ]
+            }
+        }
+    },
+    "paths": {
+        "/home/v1/": {
+            "get": {
+                "operationId": "get_list_of_forms",
+                "description": "get list of forms",
+                "summary": "list of forms and their details",
+                "security": [{
+                    "oauth": []
+                }],
+                "parameters": [{
+                        "$ref": "#/parameters/OffsetParameter"
+                    },
+                    {
+                        "$ref": "#/parameters/LimitParameter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/ListOfFormDetailsResponse"
+                    },
+                    "400": {
+                        "$ref": "#/responses/QueryParametersErrorMessages"
+                    }
+                }
+            }
+        },
+        "/form_details/{form_id}/v1/": {
+            "get": {
+                "operationId": "get_form_details",
+                "description": "form details",
+                "summary": "forms details",
+                "security": [{
+                    "oauth": []
+                }],
+                "parameters": [{
+                    "$ref": "#/parameters/FormIdParameter"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/FormDetailsResponse"
+                    },
+                    "404": {
+                        "description": "INVALID_FORM_ID"
+                    }
+                }
+            }
+        },
+        "/form_details/update/v1/": {
+            "post": {
+                "operationId": "update_user_form_details",
+                "description": "update user form details",
+                "summary": "updates user form details",
+                "security": [{
+                    "oauth": []
+                }],
+                "parameters": [{
+                    "$ref": "#/parameters/UpdateUserFormDetails"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "success response"
+                    },
+                    "400": {
+                        "$ref": "#/responses/FormDetailsErrorMessages"
+                    }
+                }
+            }
+        }
+    }
+}
