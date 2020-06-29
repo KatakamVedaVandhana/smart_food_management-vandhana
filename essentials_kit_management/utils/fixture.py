@@ -10,7 +10,7 @@ class Fixture(object):
     @staticmethod
     def populate():
         """
-        Populates data for app essesntials_kit_management
+        Populates data for app essentials_kit_management
         :return:
         """
         pass

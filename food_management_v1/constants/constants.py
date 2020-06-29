@@ -1,0 +1,16 @@
+from datetime import time
+
+DEFAULT_DATE_TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DEFAULT_DATE_FORMAT = '%Y-%m-%d'
+DEFAULT_TIME_FORMAT = '%H:%M'
+
+
+
+BREAKFAST_START_TIME = time(7,0)
+BREAKFAST_END_TIME = time(10,0)
+
+LUNCH_START_TIME = time(12,0)
+LUNCH_END_TIME = time(2,30)
+
+DINNER_START_TIME = time(7,0)
+DINNER_END_TIME = time(10,30)
