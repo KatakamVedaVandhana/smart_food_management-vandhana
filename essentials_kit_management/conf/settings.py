@@ -1,1 +1,1 @@
-# write your essesntials_kit_management settings
+# write your essentials_kit_management settings

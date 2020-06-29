@@ -9,22 +9,19 @@ class GetListOfFormsInteractor:
         self.storage = storage
         self.presenter = presenter
 
-    def get_list_of_forms(self, offset: int, limit: int):
+    def get_list_of_forms(self, offset: int, limit: int, user_id: int):
 
         self._check_if_its_valid_offset(offset=offset)
         self._check_if_its_valid_limit(limit=limit)
         list_of_forms_dtos = self.storage.get_list_of_forms(
             offset=offset, limit=limit
         )
-        list_of_forms_response = self.presenter.get_list_of_forms_reponse(
-            list_of_forms_dtos=list_of_forms_dtos
-        )
-        return list_of_forms_response
 
     def _check_if_its_valid_offset(self, offset):
         if offset < 0:
             raise self.presenter.raise_exception_for_invalid_offset()
 
     def _check_if_its_valid_limit(self, limit):
-        if limit < 0:
+        if limit < 1:
             raise self.presenter.raise_exception_for_invalid_limit()
+
