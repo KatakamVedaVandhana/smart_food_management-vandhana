@@ -1,12 +1,12 @@
-from food_management.interactors.storages.storage_interface import \
+from food_management_auth_app.interactors.storages.storage_interface import \
     StorageInterface
-from food_management.interactors.presenters.presenter_interface import \
+from food_management_auth_app.interactors.presenters.presenter_interface import \
     PresenterInterface
-from food_management.exceptions.exceptions import \
+from food_management_auth_app.exceptions.exceptions import \
     InvalidUsername, InvalidPassword
 from common.oauth2_storage import OAuth2SQLStorage
 from common.oauth_user_auth_tokens_service import OAuthUserAuthTokensService
-from food_management.exceptions.exceptions import UserDoesNotExist
+#from food_management_auth_app.exceptions.exceptions import UserDoesNotExist
 
 class LoginInteractor:
     def __init__(

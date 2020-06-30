@@ -28,9 +28,9 @@ ALLOWED_HOSTS = [
     "*"
 ]
 
-AUTH_USER_MODEL =   "food_management.User"
+AUTH_USER_MODEL =   "food_management_auth_app.User"
 
-DEFAULT_OAUTH_APPLICATION_NAME = "food_management"
+DEFAULT_OAUTH_APPLICATION_NAME = "food_management_auth_app"
 
 DEFAULT_OAUTH_CLIENT_ID = ""
 
