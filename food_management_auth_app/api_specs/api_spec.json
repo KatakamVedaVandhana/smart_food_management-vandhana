@@ -33,8 +33,8 @@
     "definitions": {},
     "parameters": {
         "LoginParameters": {
-            "description": "login parameters",
-            "name": "login details",
+            "description": "login_parameters",
+            "name": "login_parameters",
             "in": "body",
             "schema": {
                 "type": "object",
@@ -85,9 +85,7 @@
                 "operationId": "login_page",
                 "description": "login to a page",
                 "summary": "login with username, password",
-                "security": [{
-                    "oauth": ["read", "write"]
-                }],
+                "security": [],
                 "parameters": [{
                     "$ref": "#/parameters/LoginParameters"
                 }],

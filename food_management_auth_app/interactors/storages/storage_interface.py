@@ -13,3 +13,15 @@ class StorageInterface(ABC):
     @abstractmethod
     def get_user_dtos(self, user_ids: List[int]) -> List[UserDetailsDto]:
         pass
+
+    @abstractmethod
+    def validate_username(self, username: str):
+        pass
+
+    @abstractmethod
+    def validate_password(self, username: str, password: str):
+        pass
+
+    @abstractmethod
+    def get_user_details(self, username: str, password: str):
+        pass

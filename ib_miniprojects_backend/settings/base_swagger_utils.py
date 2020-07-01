@@ -63,7 +63,7 @@ SWAGGER_UTILS = {
     },
     "APPS": {
         'food_management_auth_app': {},
-        'food_management': {},
+        'food_management': {}
     },
     "HOST": os.environ.get('APIGATEWAY_ENDPOINT', '127.0.0.1:8000'),
 }

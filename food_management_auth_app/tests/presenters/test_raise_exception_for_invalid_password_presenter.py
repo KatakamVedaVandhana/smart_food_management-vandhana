@@ -1,6 +1,6 @@
 import pytest
 from django_swagger_utils.drf_server.exceptions import NotFound
-from food_manfood_management_auth_appagement.presenters.presenter_implementation import \
+from food_management_auth_app.presenters.presenter_implementation import \
     PresenterImplementation
 from food_management_auth_app.constants.exception_messages import INVALID_PASSWORD
 

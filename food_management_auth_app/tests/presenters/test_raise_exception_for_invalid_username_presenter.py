@@ -9,8 +9,10 @@ def test_raise_exception_for_invalid_username():
     #Arrange
     presenter = PresenterImplementation()
     exception_message = INVALID_USERNAME
+
     #Act
     with pytest.raises(NotFound) as exception:
         presenter.raise_exception_for_invalid_username()
+
     #Assert
     assert exception.value.message == exception_message

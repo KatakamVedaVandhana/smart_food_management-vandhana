@@ -4,6 +4,7 @@ from food_management_auth_app.interactors.storages.storage_interface import \
     StorageInterface
 from food_management_auth_app.interactors.storages.dtos import UserDetailsDto
 from food_management_auth_app.models import User
+from food_management_auth_app.exceptions.exceptions import InvalidUsername, InvalidPassword
 
 class StorageImplementation(StorageInterface):
 
@@ -12,7 +13,7 @@ class StorageImplementation(StorageInterface):
         return user_ids
 
     def get_user_dtos(self, user_ids: List[int]):
-        user_objs = User.objects.filte(id__in=user_ids)
+        user_objs = User.objects.filter(id__in=user_ids)
         user_dtos = [
             self._convert_user_obj_into_user_dto(user_obj)
             for user_obj in user_objs
@@ -26,3 +27,36 @@ class StorageImplementation(StorageInterface):
             name=user_obj.name,
             profile_pic=user_obj.profile_pic
         )
+
+    def get_user_details(self, username: str, password: str):
+
+        try:
+            user_obj = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise InvalidUsername
+
+        is_valid_password = user_obj.check_password(password)
+        not_a_valid_password = not is_valid_password
+
+        if not_a_valid_password:
+            raise InvalidPassword
+
+        return user_obj.id, user_obj.is_superuser
+
+    def validate_username(self, username: str):
+
+        try:
+            User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise InvalidUsername
+        return
+
+    def validate_password(self, username: str, password: str):
+
+        user_obj = User.objects.get(username=username)
+
+        is_valid_password = user_obj.check_password(password)
+        not_a_valid_password = not is_valid_password
+
+        if not_a_valid_password:
+            raise InvalidPassword

@@ -1,4 +1,4 @@
-from food_management_auth_app.models.user import User
+from .user import User
 
 __all__ = [
     'User'

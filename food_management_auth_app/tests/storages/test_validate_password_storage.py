@@ -2,15 +2,15 @@ import pytest
 from food_management_auth_app.storages.storage_implementation import \
     StorageImplementation
 from food_management_auth_app.exceptions.exceptions import InvalidPassword
-from food_management_auth_app.models.user import User
+from food_management_auth_app.models import User
 
 
 @pytest.mark.django_db
 def test_validate_password_with_valid_password(user_objs):
 
     #Arrange
-    username= 'user1'
-    password = 'password1'
+    username= 'username1'
+    password = 'ibhubs-1234'
     storage = StorageImplementation()
 
     #Act
@@ -27,7 +27,7 @@ def test_validate_password_with_valid_password(user_objs):
 def test_validate_password_with_invalid_password_raises_error(user_objs):
 
     #Arrange
-    username = 'user1'
+    username = 'username1'
     invalid_password = 'password_1'
     storage = StorageImplementation()
 
