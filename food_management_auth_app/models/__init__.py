@@ -1,4 +1,8 @@
-__all__ = []
+from food_management_auth_app.models.user import User
+
+__all__ = [
+    'User'
+]
 
 # class DummyModel(AbstractDateTimeModel):
 #     """

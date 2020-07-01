@@ -1,4 +1,3 @@
-from food_management.models.user import User
 from food_management.models.items import Items
 from food_management.models.announcements import Announcements
 from food_management.models.user_rating import UserRating
@@ -7,10 +6,10 @@ from food_management.models.meal import Meal
 from food_management.models.user_meal_status import UserMealStatus
 from food_management.models.meal_course import MealCourse
 from food_management.models.food_wastage import FoodWastage
+#from food_management.models.user import User
 
 
 __all__ = [
-    "User",
     "Items",
     "Announcements",
     "UserRating",
