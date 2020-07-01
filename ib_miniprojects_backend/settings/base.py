@@ -28,9 +28,9 @@ ALLOWED_HOSTS = [
     "*"
 ]
 
-AUTH_USER_MODEL =   "food_management.user"
+AUTH_USER_MODEL = "food_management_auth_app.User"
 
-DEFAULT_OAUTH_APPLICATION_NAME = "food_management"
+DEFAULT_OAUTH_APPLICATION_NAME = "food_management_auth_app"
 
 DEFAULT_OAUTH_CLIENT_ID = ""
 
@@ -204,6 +204,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # django sessions used in admin
     'django.contrib.messages',  # info, success, error message in response. admin requires this
     'django.contrib.staticfiles',  # host the static files
+    
 ]
 
 THIRD_PARTY_APPS_BASE = [
