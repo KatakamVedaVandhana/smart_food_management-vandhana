@@ -10,7 +10,4 @@ class UserMealStatus(models.Model):
     custom_meal_quantity = models.IntegerField(default=0)
     item = models.ForeignKey('Items', on_delete=models.CASCADE, null=True)
     meal_course = models.ForeignKey('MealCourse', on_delete=models.CASCADE)
-    # meal_course = models.CharField(
-    #     choices = CourseType.get_list_of_tuples(), max_length=200
-    # )
     meal = models.ForeignKey('Meal', on_delete=models.CASCADE)

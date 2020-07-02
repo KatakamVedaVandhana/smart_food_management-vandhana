@@ -2,7 +2,7 @@ from typing import List
 
 from food_management_auth_app.interactors.storages.storage_interface import \
     StorageInterface
-from food_management_auth_app.interactors.storages.dtos import UserDetailsDto
+from food_management_auth_app.interactors.storages.dtos import UserDto
 from food_management_auth_app.models import User
 from food_management_auth_app.exceptions.exceptions import InvalidUsername, InvalidPassword
 
@@ -21,10 +21,10 @@ class StorageImplementation(StorageInterface):
         return user_dtos
 
     def _convert_user_obj_into_user_dto(self, user_obj):
-        return UserDetailsDto(
+        return UserDto(
             user_id=user_obj.id,
             username=user_obj.username,
-            name=user_obj.name,
+            email=user_obj.email,
             profile_pic=user_obj.profile_pic
         )
 

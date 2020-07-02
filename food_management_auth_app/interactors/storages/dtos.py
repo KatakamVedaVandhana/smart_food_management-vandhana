@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+import re
 
+from dataclasses import dataclass
+from typing import Pattern
 
 @dataclass
 class UserDetailsDto:
@@ -11,6 +13,8 @@ class UserDetailsDto:
 
 @dataclass
 class UserDto:
+
     user_id: int
     username: str
-    password: str
+    email: str
+    profile_pic: Pattern = re.compile("(https?)://([^/\r\n]+)(/[^\r\n]*)?")

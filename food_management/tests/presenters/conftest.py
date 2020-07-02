@@ -1,5 +1,8 @@
 import pytest
+import re
 from freezegun import freeze_time
+from dataclasses import dataclass
+from typing import Pattern
 from django.utils import timezone
 from datetime import datetime
 from datetime import time
@@ -628,3 +631,34 @@ def food_wastage_dict():
         ]
     }
     return food_wastage_dict
+
+@dataclass
+class UserDto:
+    user_id: int
+    username: str
+    email: str
+    profile_pic: Pattern = re.compile("(https?)://([^/\r\n]+)(/[^\r\n]*)?")
+
+
+@pytest.fixture
+def user_profile_dtos():
+
+    return [
+        UserDto(
+            user_id=1,
+            username='username1',
+            profile_pic='https://www.profile_pic1',
+            email='username1@gmail.com'
+            )
+        ]
+
+@pytest.fixture
+def expected_user_profile_dtos_response():
+
+    response_dict = {
+        'user_id': 1,
+        'profile_pic': 'https://www.profile_pic1',
+        'username': 'username1',
+        'email': 'username1@gmail.com'
+    }
+    return response_dict

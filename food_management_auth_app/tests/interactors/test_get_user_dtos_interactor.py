@@ -25,29 +25,19 @@ def test_get_user_dtos_with_invalid_user_ids_raise_exception():
     storage.get_user_ids.assert_called_once()
 
 
-def test_get_user_dtos_with_valid_details_return_user_dtos():
+def test_get_user_dtos_with_valid_details_return_user_dtos(user_dtos):
 
     #Arrange
     user_ids = [1,2]
     storage = create_autospec(StorageInterface)
     interactor = GetUserDtosInteractor(storage=storage)
     storage.get_user_ids.return_value = [1,2,3,4,5]
-    expected_user_dtos = [
-        UserDetailsDto(
-            user_id=1, username='user_1',
-            name='user 1', profile_pic='http://www.profile_pic1.com'
-        ),
-        UserDetailsDto(
-            user_id=2, username='user_2',
-            name='user 2', profile_pic='http://www.profile_pic2.com'
-        )
-    ]
-    storage.get_user_dtos.return_value = expected_user_dtos
+    storage.get_user_dtos.return_value = user_dtos
 
     #Act
-    user_dtos = interactor.get_user_dtos(user_ids=user_ids)
+    actual_user_dtos = interactor.get_user_dtos(user_ids=user_ids)
 
     #Assert
     storage.get_user_ids.assert_called_once()
     storage.get_user_dtos.assert_called_once_with(user_ids=user_ids)
-    assert user_dtos == expected_user_dtos
+    assert actual_user_dtos == user_dtos

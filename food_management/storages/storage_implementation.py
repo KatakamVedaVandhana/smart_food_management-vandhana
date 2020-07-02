@@ -2,7 +2,7 @@ from typing import List
 from datetime import datetime
 from food_management.interactors.storages.storage_interface import \
     StorageInterface
-from food_management.models import User, Meal
+from food_management.models import Meal
 from food_management.models import Announcements
 from food_management.models.user_rating import UserRating
 from food_management.models.user_feedback import UserFeedback

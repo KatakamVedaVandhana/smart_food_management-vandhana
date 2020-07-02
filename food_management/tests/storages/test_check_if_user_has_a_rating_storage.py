@@ -4,7 +4,7 @@ from food_management.storages.storage_implementation import \
 
 @pytest.mark.django_db
 def test_check_if_user_has_a_rating_return_false_if_user_has_no_rating(
-        user_objs, meal_objs):
+       meal_objs):
 
     #Arrange
     storage = StorageImplementation()

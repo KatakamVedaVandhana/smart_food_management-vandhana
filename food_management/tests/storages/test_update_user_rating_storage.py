@@ -16,4 +16,3 @@ def test_update_user_rating(update_rating_dtos):
 
     #Assert
     userrating_obj = UserRating.objects.filter(user_id=user_id, meal_id=meal_id)
-    

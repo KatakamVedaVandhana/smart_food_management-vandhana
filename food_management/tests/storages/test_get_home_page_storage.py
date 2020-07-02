@@ -8,7 +8,7 @@ from food_management.storages.meal_storage_implementation import \
 
 @pytest.mark.django_db
 @freeze_time('2020-02-12')
-def test_get_home_page_return_the_details_of_the_page(home_page_dto, user_objs, item_objs):
+def test_get_home_page_return_the_details_of_the_page(home_page_dto, item_objs):
 
     #Arrange
     storage = MealStorageImplementation()

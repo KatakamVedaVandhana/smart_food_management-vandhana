@@ -6,6 +6,7 @@ from food_management.interactors.storages.dtos import (
     HomePageDto, AnnouncementDtos, SetMealPreferenceDto, MealScheduleDto,
     ItemDto, HeadCountDto, FoodWastageDto
 )
+from food_management.dtos.dtos import UserProfileDto
 
 class PresenterInterface(ABC):
 
@@ -79,4 +80,8 @@ class PresenterInterface(ABC):
 
     @abstractmethod
     def get_food_wastage_response(self, food_wastage_dto: FoodWastageDto):
+        pass
+
+    @abstractmethod
+    def get_user_dtos_response(self, user_dto: UserProfileDto):
         pass

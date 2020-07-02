@@ -1,6 +1,9 @@
+import re
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List
+from typing import Pattern
 from food_management.constants.enums import TypeOfMeal, CourseType, RatingType
 
 @dataclass
@@ -47,3 +50,12 @@ class UpdateMealScheduleDto:
     meal_type: TypeOfMeal
     date: datetime
     items: List[ItemDetailsDto]
+
+
+@dataclass
+class UserProfileDto:
+
+    user_id: int
+    username: str
+    email: str
+    profile_pic: Pattern = re.compile("(https?)://([^/\r\n]+)(/[^\r\n]*)?")

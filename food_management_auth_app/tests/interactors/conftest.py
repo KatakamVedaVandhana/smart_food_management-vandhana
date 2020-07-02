@@ -13,9 +13,17 @@ from food_management_auth_app.interactors.storages.dtos import (
 def user_dtos():
 
     user_dtos = [
-        UserDto(user_id=1, username='user1', password='password1'),
-        UserDto(user_id=2, username='user2', password='password2'),
-        UserDto(user_id=3, username='user3', password='password3')
+        UserDto(
+            user_id=1, username='user1', email='user1@gmail.com',
+            profile_pic='https://www.profile_pic_1.com/'
+        ),
+        UserDto(
+            user_id=2, username='user2', email='user2@gmail.com',
+            profile_pic='https://www.profile_pic_2.com/'
+        ),
+        UserDto(
+            user_id=3, username='user3', email='user3@gmail.com',
+            profile_pic='https://www.profile_pic_3.com/')
     ]
     return user_dtos
 

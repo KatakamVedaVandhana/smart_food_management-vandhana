@@ -5,7 +5,6 @@ from food_management.constants.constants import (
     BREAKFAST_END_TIME, LUNCH_START_TIME, LUNCH_END_TIME,
     DINNER_START_TIME, DINNER_END_TIME
 )
-from food_management.models.user import User
 from food_management.models import Meal, FoodWastage
 from food_management.models.user_rating import UserRating
 from food_management.models.user_feedback import UserFeedback
@@ -30,19 +29,6 @@ from food_management.interactors.storages.dtos import (
 from food_management.constants.enums import (
     TypeOfMeal, CategoryType, UnitType, CourseType
 )
-
-@pytest.fixture
-def user_objs():
-
-    user_dict = [
-        {'username': 'user1', 'password': 'password1'},
-        {'username': 'user2', 'password': 'password2'},
-        {'username': 'user3', 'password': 'password3'}
-    ]
-
-    User.objects.bulk_create([
-        User(username=user['username'], password=make_password(user['password'])
-    ) for user in user_dict])
 
 @pytest.fixture
 @freeze_time('2020-02-12')
@@ -273,7 +259,7 @@ def meal_course_objs(item_objs, meal_objs):
 
 
 @pytest.fixture
-def user_meal_course_objs(meal_objs, user_objs, meal_course_objs):
+def user_meal_course_objs(meal_objs, meal_course_objs):
     user_meal_course_dict=[
         {
             'user_id': 1, 'meal_course_id': 1,
@@ -436,7 +422,7 @@ def meal_course_complete_details_dtos(item_objs, meal_course_objs):
 def meal_data_dtos(meal_course_complete_details_dtos, meal_items_dtos):
     return SetMealPreferenceDto(
         meal_course=meal_course_complete_details_dtos,
-        items=meal_items_dtos
+        items=meal_items_dtos,
     )
 
 @pytest.fixture
@@ -481,7 +467,7 @@ def item_and_quantity_dtos(item_objs):
 
 @pytest.fixture
 @freeze_time('2020-02-12')
-def custom_meal_upadte_dto(user_objs, item_and_quantity_dtos, custom_meal_objs):
+def custom_meal_upadte_dto(item_and_quantity_dtos, custom_meal_objs):
     return CustomeMealUpdateDto(
         user_id=1,
         meal_type = 'Breakfast',
@@ -491,7 +477,7 @@ def custom_meal_upadte_dto(user_objs, item_and_quantity_dtos, custom_meal_objs):
     )
 
 @pytest.fixture
-def user_rating_objs(user_objs, meal_objs):
+def user_rating_objs(meal_objs):
     rating_list = [
         {
             'user_id': 1, 'meal_id': 1, 'item_id': 1, 'taste': 4, 'quality': 3
@@ -525,7 +511,7 @@ def items_and_rating_dtos(item_objs, meal_objs):
 
 @pytest.fixture
 @freeze_time('2020-02-12')
-def rating_dtos(items_and_rating_dtos, user_objs, meal_objs):
+def rating_dtos(items_and_rating_dtos, meal_objs):
     return RatingDto(
         user_id=1,
         meal_type='Breakfast',
@@ -535,7 +521,7 @@ def rating_dtos(items_and_rating_dtos, user_objs, meal_objs):
     )
 
 @pytest.fixture
-def user_feedback(user_objs, meal_objs):
+def user_feedback(meal_objs):
     UserFeedback.objects.create(user_id=1, meal_id=1, description='')
 
 @pytest.fixture
@@ -558,7 +544,7 @@ def user_rating_dto(items_and_rating_dtos, user_rating_objs, user_feedback):
 @freeze_time('2020-02-12')
 def update_rating_dtos(
         update_items_and_rating_dtos, user_rating_objs,
-        user_objs, meal_objs, user_feedback):
+        meal_objs, user_feedback):
     return RatingDto(
         user_id=1,
         meal_type='Breakfast',
@@ -683,8 +669,6 @@ def food_wastage_dto(items_and_wastage,food_and_wastage_obj):
         base_unit= 'kg',
         items_and_wastage= items_and_wastage
     )
-
-
 
 @pytest.fixture
 def head_count_dto(user_meal_course_objs):
