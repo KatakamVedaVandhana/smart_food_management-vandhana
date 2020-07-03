@@ -698,6 +698,29 @@
           "base_unit", "items_and_wastage"
         ]
       }
+    },
+    "GetUserProfileResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string"
+          },
+          "profile_pic": {
+            "type": "string",
+            "format": "url"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      }
     }
   },
   "paths": {
@@ -982,6 +1005,22 @@
         "responses": {
           "200": {
             "$ref": "#/responses/GetFoodWastageResonse"
+          }
+        }
+      }
+    },
+    "/user/profile/v1/": {
+      "get": {
+        "operationId": "get_user_profile",
+        "description": "get the user details",
+        "summary": "get the user profile deails",
+        "security": [{
+          "oauth": ["read", "write"]
+        }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetUserProfileResponse"
           }
         }
       }

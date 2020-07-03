@@ -16,7 +16,7 @@ def test_meal_preference_return_dto(meal_data_dtos, meal_objs):
     meal_id = 1
     #Act
     actual_meal_preference_dtos = meal_storage.get_meal_preference(
-        meal_id=meal_id
+        meal_id=meal_id, user_id=1
     )
     #Assert
     assert actual_meal_preference_dtos == meal_data_dtos

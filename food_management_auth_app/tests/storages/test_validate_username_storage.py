@@ -1,14 +1,14 @@
-from food_management.storages.storage_implementation import \
+from food_management_auth_app.storages.storage_implementation import \
     StorageImplementation
-from food_management.models.user import User
-from food_management.exceptions.exceptions import InvalidUsername
+from food_management_auth_app.models import User
+from food_management_auth_app.exceptions.exceptions import InvalidUsername
 import pytest
 
 @pytest.mark.django_db
 def test_validate_username_with_valid_username(user_objs):
 
     #Arrange
-    username = 'user1'
+    username = 'username1'
     storage = StorageImplementation()
 
     #Act

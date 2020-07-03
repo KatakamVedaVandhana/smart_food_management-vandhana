@@ -17,6 +17,7 @@ from food_management.interactors.storages.dtos import (
     HomePageDto, AnnouncementDtos, SetMealPreferenceDto, MealScheduleDto,
     ItemDto, HeadCountDto, UserRatingDto, FoodWastageDto
 )
+from food_management.dtos.dtos import UserProfileDto
 
 
 class PresenterImplementation(PresenterInterface):
@@ -237,3 +238,14 @@ class PresenterImplementation(PresenterInterface):
             "base_unit": item_and_wastage.base_unit
         }
         return item_and_wastage_dict
+
+    def get_user_dtos_response(self, user_dto: UserProfileDto):
+        user_dto = user_dto[0]
+        user_dict = {
+            'user_id': user_dto.user_id,
+            'username': user_dto.username,
+            'profile_pic': user_dto.profile_pic,
+            'email': user_dto.email
+        }
+        return user_dict
+
