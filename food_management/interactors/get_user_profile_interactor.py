@@ -16,5 +16,5 @@ class GetUserProfileInteractor:
         #TODO get user details from service adapter
         service_adapter = get_service_adapter()
         user_dto = service_adapter.auth_service.get_user_dtos(user_ids=[user_id])
-        print(user_dto)
-        return user_dto[0]
+        user_dto = user_dto[0]
+        return user_dto
